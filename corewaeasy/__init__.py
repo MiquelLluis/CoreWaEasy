@@ -1,0 +1,1 @@
+from .corewaeasy import CoReManager
