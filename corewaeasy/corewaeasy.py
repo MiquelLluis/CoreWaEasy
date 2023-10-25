@@ -321,8 +321,8 @@ class CoReManager:
         """
         txt_files = {}
         for file in self.db_path.rglob('Rh*.txt'):
-            key = file.parts[1].replace('_', ':')
-            run = file.parts[2]
+            key = file.parts[-3].replace('_', ':')
+            run = file.parts[-2]
             ecc = self._read_eccentricity(file.parent/'metadata.txt')
             rext = int(file.stem[-5:])
             
