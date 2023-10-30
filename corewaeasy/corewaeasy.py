@@ -17,6 +17,8 @@ import watpy
 
 
 MSUN_SEC = 4.925794970773135e-06  # G M_Sun / c³
+MSUN_MET = 1.4766250614046494e3   # G M_Sun / c²
+MPC_MET  = 3.085677581491367e+22  # m
 
 
 class CoReManager:
@@ -125,9 +127,9 @@ class CoReManager:
 
         return counts
 
-    def download_strains(self, simkeys, keep_h5=False, overwrite=False,
+    def download_mode22(self, simkeys, keep_h5=False, overwrite=False,
                          prot='https', lfs=False, verbose=True):
-        """Download ONLY the optimum strains rh_22.
+        """Download ONLY the optimum strains Rh_22.
 
         Downloads each simulation, keeps the strains with the lowest
         eccentricity and highest extraction point 'r' in a TXT file, updates
@@ -193,6 +195,63 @@ class CoReManager:
         gw_data = np.loadtxt(file)
 
         return gw_data
+
+    @staticmethod
+    def sw_Y22(i, phi):
+        """Spin-weighted spherical harmonic mode lm = 22.
+
+        Ref: Ajith et al., 2011
+
+        Parameters:
+        -----------
+        i : float
+            Inclination angle from the z-axis.
+
+        phi : float
+            Phase angle.
+
+        """
+        return np.sqrt(5/(64*np.pi)) * (1 + np.cos(i))**2 * np.exp(2j*phi)
+
+    def gen_strain(self, skey, distance, inclination, phi):
+        """Build strain from time-domain mode 22 in mass rescaled, geom. units.
+        
+        Parameters:
+        -----------
+        skey : str
+            Key (database_key) of the simulation.
+
+        distance : float
+            Distance to the source in Mpc.
+        
+        inclination, phi: float
+            Angle positions.
+
+        Returns:
+        --------
+        time : ndarray(float)
+            Time points in seconds.
+        
+        hplus, hcross : ndarray(float)
+            Polarizations of the rescaled strain.
+        
+        """
+        gw_data = self.load_sim(skey)
+        mass = self.metadata.id_mass.loc[skey]
+        u_M = gw_data[:,0]
+        Rh = gw_data[:,1] + 1j*gw_data[:,2]
+
+        # Convert time.
+        time = u_M * mass * MSUN_SEC
+
+        # Genearte Strain polarizations.
+        sY22 = self.sw_Y22(phi, inclination)
+        amplitude_prefactor = mass * MSUN_MET / (distance * MPC_MET)
+        h = amplitude_prefactor * Rh * sY22
+        hplus = h.real
+        hcross = h.imag
+        
+        return time, hplus, hcross
 
     def get_runkey_lowest_eccentricity(self, skey):
         """Find the run with the lowest eccentricity for a given simulation.
