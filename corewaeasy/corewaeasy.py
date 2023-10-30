@@ -1,20 +1,22 @@
-"""CoRe Watpy made easy.
+"""Interface to manage CoRe-Watpy metadata and downloads.
 
 Includes the class CoReManager which centralices all common operations
-in watpy.
+in Watpy.
 
 Author: Miquel Llorens
 E-mail: miquel.llorens@uv.es
-Last updated: 2023-10-24
 
 """
 from pathlib import Path
 from shutil import rmtree
 
 import numpy as np
-import pandas as pd
+from pandas import DataFrame
 from tqdm.auto import tqdm
 import watpy
+
+
+MSUN_SEC = 4.925794970773135e-06  # G M_Sun / c³
 
 
 class CoReManager:
@@ -34,7 +36,7 @@ class CoReManager:
     eos : set
         All EOS found available.
 
-    metadata : pd.DataFrame
+    metadata : DataFrame
         Metadata from all simulations in 'cdb' collected in a single DF.
 
     downloaded : dict
@@ -271,7 +273,7 @@ class CoReManager:
         idb = self.cdb.idb
         key_list = idb.dbkeys
         metalist = [core_md.data for core_md in idb.index]
-        md = pd.DataFrame(metalist, index=key_list)
+        md = DataFrame(metalist, index=key_list)
         # Convert data types of the selected columns:
         for field in self.fields_float:
             mask = (md[field] == 'NAN') | (md[field] == '')
