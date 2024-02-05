@@ -239,7 +239,7 @@ class CoReManager:
         gw_data = self.load_sim(skey)
         mass = self.metadata.id_mass.loc[skey]
         u_M = gw_data[:,0]
-        Rh = gw_data[:,1] + 1j*gw_data[:,2]
+        Rh = gw_data[:,1] - 1j*gw_data[:,2]
 
         # Convert time.
         time = u_M * mass * MSUN_SEC
