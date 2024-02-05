@@ -249,7 +249,7 @@ class CoReManager:
         amplitude_prefactor = mass * MSUN_MET / (distance * MPC_MET)
         h = amplitude_prefactor * Rh * sY22
         hplus = h.real
-        hcross = h.imag
+        hcross = -h.imag
         
         return time, hplus, hcross
 
