@@ -1,6 +1,6 @@
 <a id="corewaeasy"></a>
 
-# corewaeasy
+# corewaeasy (DEPRECATED, it was included in GWADAMA as a part of the IO tools)
 
 CoRe Watpy made easy.
 
@@ -10,7 +10,7 @@ in watpy.
 ---
 - Author: Miquel Llorens
 - E-mail: miquel.llorens@uv.es
-- Last updated: 2023-10-24
+- Last updated: 2024-02-14
 ---
 
 <a id="corewaeasy.corewaeasy.CoReManager"></a>
